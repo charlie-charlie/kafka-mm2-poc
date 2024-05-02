@@ -1,0 +1,27 @@
+
+networks:
+  network1:
+    name: kafka-network-manual # docker network create -d bridge kafka-network-manual
+    external: true
+
+services:
+
+  mm2-unidirect:
+    image: confluentinc/cp-kafka
+    hostname: mm2-unidirect
+    container_name: mm2-unidirect
+    networks:
+      - network1
+    volumes:
+      - ./uni_config:/tmp/kafka/config
+    ports:
+      - 9098:9098
+      - 29098:29098
+    environment:
+      KAFKA_BROKER_ID: 6
+      KAFKA_ZOOKEEPER_CONNECT: zookeeperC:42181,zookeeperA:22181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:29098,PLAINTEXT_HOST://:9098
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://mm2-unidirect:29098,PLAINTEXT_HOST://localhost:9098
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+      KAFKA_AUTO_OFFSET_RESET: "latest"
